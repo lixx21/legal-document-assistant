@@ -1,0 +1,174 @@
+version: '3.8'
+
+x-airflow-common:
+  &airflow-common
+  build: orchestration/.
+  environment:
+    &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
+    AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
+    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
+    # yamllint disable rule:line-length
+    # Use simple http server on scheduler for health checks
+    # See https://airflow.apache.org/docs/apache-airflow/stable/administration-and-deployment/logging-monitoring/check-health.html#scheduler-health-check-server
+    # yamllint enable rule:line-length
+    AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
+    AIRFLOW_CONFIG: '/opt/airflow/orchestration/config/airflow.cfg'
+  volumes:
+    - ${AIRFLOW_PROJ_DIR:-.}/orchestration/dags:/opt/airflow/orchestration/dags/
+    - ${AIRFLOW_PROJ_DIR:-.}/orchestration/logs:/opt/airflow/orchestration/logs/
+    - ${AIRFLOW_PROJ_DIR:-.}/orchestration/config:/opt/airflow/orchestration/config/
+    - ${AIRFLOW_PROJ_DIR:-.}/orchestration/plugins:/opt/airflow/orchestration/plugins/
+  user: "${AIRFLOW_UID:-50000}:0"
+  depends_on:
+    &airflow-common-depends-on
+    redis:
+      condition: service_healthy
+    postgres:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: airflow_postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    networks:
+      - network
+  #  restart: on-failure 
+
+  redis:
+    image: redis:7.2-bookworm
+    container_name: airflow_redis
+    expose:
+      - 6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 30s
+      retries: 50
+      start_period: 30s
+    networks:
+      - network
+  #  restart: on-failure
+
+  airflow-webserver:
+    <<: *airflow-common
+    command: webserver
+    container_name: airflow_webserver
+    ports:
+      - "8080:8080"
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+    mem_limit: 1024m  # Set memory limit to 1GB
+    networks:
+      - network
+
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    container_name: airflow_scheduler
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+    mem_limit: 1024m  # Set memory limit to 1GB
+    networks:
+      - network
+
+  airflow-worker:
+    <<: *airflow-common
+    command: celery worker
+    container_name: airflow_worker
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+      - network
+
+
+  airflow-triggerer:
+    <<: *airflow-common
+    command: triggerer
+    container_name: airflow_triggerer
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+    - network
+
+  airflow-init:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        mkdir -p /orchestration/sources/logs /orchestration/sources/dags /orchestration/sources/plugins
+        chown -R "${AIRFLOW_UID}:0" /orchestration/sources/{logs,dags,plugins}
+        exec /entrypoint airflow version
+    environment:
+      <<: *airflow-common-env
+      _AIRFLOW_DB_MIGRATE: 'true'
+      _AIRFLOW_WWW_USER_CREATE: 'true'
+      _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
+      _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
+    user: "0:0"
+    volumes:
+      - ${AIRFLOW_PROJ_DIR:-.}/orchestration:/sources
+    networks:
+      - network
+
+  # LLM 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - network
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+  postgres-db-volume:
