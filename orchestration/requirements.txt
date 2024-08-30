@@ -1,2 +1,3 @@
 orjsonl
 pymongo
+elasticsearch

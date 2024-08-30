@@ -1,0 +1,5 @@
+pymongo
+streamlit
+elasticsearch
+mistralai
+stqdm

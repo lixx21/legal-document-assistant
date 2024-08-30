@@ -78,7 +78,6 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-    mem_limit: 1024m  # Set memory limit to 1GB
     networks:
       - network
 
@@ -164,6 +163,16 @@ services:
       - mongo-data:/data/db
     networks:
       - network
+  
+  app:
+    build: llm-app/.
+    container_name: llm-app
+    volumes:
+      - ./llm-app/:/app
+    networks:
+      - network
+    depends_on:
+      - elasticsearch
 
 networks:
   network:

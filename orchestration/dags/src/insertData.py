@@ -3,7 +3,7 @@ import pandas as pd
 from src.connection import mongodb_connection
 import os 
 
-def getJsonData():
+def insertJsonData():
     
     db, collection  = mongodb_connection("llm_data", "legal_document")
 
@@ -12,8 +12,8 @@ def getJsonData():
 
     for data in legalData:
         allData.append({
-            # "question": data['question'],
-            "text": data['answer']
+            "question": str(data['question']),
+            "text": str(data['answer'])
         })
 
     try:
@@ -30,15 +30,20 @@ def getJsonData():
     
     return "Success Insert JSON data"
 
-def getCsvData():
+def insertCsvData():
 
     db, collection  = mongodb_connection("llm_data", "legal_document")
 
     allData = []
     legalData = pd.read_csv(f"{os.getcwd()}/dags/dataset/legal_text_classification.csv")
 
-    for data in legalData['case_text'].values:
-        allData.append({"text": data})
+    for index, row in legalData.iterrows():
+        allData.append({
+            "question": str(row['case_title']),
+            "text": str(row['case_text'])
+        })
+
+    print(allData[0])
 
     #TODO: Insert all_data
     print("insert all CSV data")
