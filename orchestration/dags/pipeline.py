@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 from datetime import timedelta
-from src.insertData import insertJsonData, insertCsvData
+from src.insertData import insertJsonData, insertCsvData, createIndex
 
 defaultArguments = {
     "owner": "Felix Pratamasan",
@@ -30,4 +30,10 @@ insertCsv = PythonOperator(
     dag=dag
 )
 
-insertJson >> insertCsv
+ingestData = PythonOperator(
+    task_id = "ingest_data",
+    python_callable = createIndex,
+    dag=dag
+)
+
+insertJson >> insertCsv >> ingestData

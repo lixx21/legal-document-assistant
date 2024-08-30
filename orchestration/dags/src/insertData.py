@@ -2,6 +2,9 @@ import orjsonl
 import pandas as pd
 from src.connection import mongodb_connection
 import os 
+from shutil import ExecError
+from elasticsearch import Elasticsearch
+from src.getData import getData
 
 def insertJsonData():
     
@@ -50,3 +53,37 @@ def insertCsvData():
     collection.insert_many(allData)
 
     return "SUccess Insert CSV Data"
+
+def createIndex():
+
+    esClient = Elasticsearch("http://elasticsearch:9200")
+    indexSettings= {
+        "settings": {
+            "number_of_shards": 1,
+            "number_of_replicas": 0
+        },
+        "mappings":{
+            "properties":{
+                "question": {"type": "text"},
+                "text": {"type": "text"},
+                
+            }
+        }
+    }
+    try:
+        esClient.indices.create(index=indexName, body=indexSettings)
+    except:
+        pass
+
+    #TODO: Ingest data
+    data = getData()
+    indexName = "legal-documents"
+    print("create index...")
+    for doc in data:
+        try:
+            esClient.index(index=indexName, document=doc)
+        except Exception as e:
+            print(f"error message {e}")
+            print(f"error doc: {doc}")
+
+    return "Success Ingest Data"

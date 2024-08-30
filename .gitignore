@@ -1,2 +1,3 @@
 orchestration/logs
 orchestration/plugins
+*.ipynb

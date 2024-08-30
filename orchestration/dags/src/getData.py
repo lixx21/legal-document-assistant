@@ -1,4 +1,4 @@
-from connection import mongodb_connection
+from src.connection import mongodb_connection
 
 def getData():
     db, collection  = mongodb_connection("llm_data", "legal_document")

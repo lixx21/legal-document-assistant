@@ -3,3 +3,4 @@ streamlit
 elasticsearch
 mistralai
 stqdm
+transformers
