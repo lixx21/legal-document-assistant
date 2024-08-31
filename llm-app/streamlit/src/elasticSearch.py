@@ -32,12 +32,7 @@ def elasticSearch(esClient, query, indexName):
     return resultDocs
 
 
-indexName = "legal-documents"
-esClient = getEsClient()
-query = "In the case of Nasr v NRMA Insurance [2006] NSWSC 1018, why was the plaintiff's appeal lodged out of time?"
 
-searchResult = elasticSearch(esClient, query, indexName)
-print(f"result: {searchResult[0]}")
 
 
 

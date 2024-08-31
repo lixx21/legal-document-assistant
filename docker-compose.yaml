@@ -173,6 +173,8 @@ services:
       - network
     depends_on:
       - elasticsearch
+    ports:
+      - "8501:8501"
 
 networks:
   network:

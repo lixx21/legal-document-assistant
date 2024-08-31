@@ -5,4 +5,4 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
 
-CMD ["python", "src/elasticSearch.py"]
+CMD ["streamlit", "run", "streamlit/app.py"]
