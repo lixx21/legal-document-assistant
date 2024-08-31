@@ -185,7 +185,7 @@ services:
     build: llm-app/.
     container_name: llm_app
     environment:
-      - HUGGINGFACE_KEY=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
+      - HUGGINGFACE_KEY=
     volumes:
       - ./llm-app/:/app
     networks:
