@@ -164,9 +164,26 @@ services:
     networks:
       - network
   
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=admin
+    depends_on:
+      - mongodb
+    networks:
+      - network
+  
   app:
     build: llm-app/.
-    container_name: llm-app
+    container_name: llm_app
     volumes:
       - ./llm-app/:/app
     networks:
