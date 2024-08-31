@@ -79,6 +79,13 @@ def createIndex():
     data = getData()
     indexName = "legal-documents"
     print("create index...")
+
+    # Check if the index exists
+    if esClient.indices.exists(index=indexName):
+        # Delete the index
+        print("delete old index")
+        esClient.indices.delete(index=indexName)
+
     for doc in data:
         try:
             esClient.index(index=indexName, document=doc)
