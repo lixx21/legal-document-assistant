@@ -1,6 +1,6 @@
 import streamlit as st
 from src.elasticSearch import getEsClient, elasticSearch
-from src.llm import query
+from src.llm import query, captureUserInput
 
 def main():
     st.set_page_config(
@@ -35,6 +35,7 @@ def main():
                     })
 
                     #TODO: Save users' output performance
+                    captureUserInput(userInput, output['answer'], output['score'])
 
                     st.write(output['answer'])
 
