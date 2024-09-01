@@ -5,6 +5,15 @@ import os
 from shutil import ExecError
 from elasticsearch import Elasticsearch
 from src.getData import getData
+import hashlib
+
+def generate_document_id(doc):
+    # combined = f"{doc['course']}-{doc['question']}"
+    combined = f"{doc['text'][:10]}-{doc['question']}"
+    hash_object = hashlib.md5(combined.encode())
+    hash_hex = hash_object.hexdigest()
+    document_id = hash_hex[:8]
+    return document_id
 
 def insertJsonData():
     
@@ -14,10 +23,16 @@ def insertJsonData():
     legalData = orjsonl.load(f"{os.getcwd()}/dags/dataset/qa.jsonl")
 
     for data in legalData:
-        allData.append({
+
+        data = {
             "question": str(data['question']),
             "text": str(data['answer'])
-        })
+        }
+
+        docId = generate_document_id(data)
+        data["doc_id"] = str(docId)
+
+        allData.append(data)
 
     try:
         if collection.count_documents({})>0:
@@ -41,12 +56,16 @@ def insertCsvData():
     legalData = pd.read_csv(f"{os.getcwd()}/dags/dataset/legal_text_classification.csv")
 
     for index, row in legalData.iterrows():
-        allData.append({
+        
+        data = {
             "question": str(row['case_title']),
             "text": str(row['case_text'])
-        })
+        }
 
-    print(allData[0])
+        docId = generate_document_id(data)
+        data["doc_id"] = str(docId)
+
+        allData.append(data)
 
     #TODO: Insert all_data
     print("insert all CSV data")

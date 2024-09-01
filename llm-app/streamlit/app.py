@@ -33,6 +33,7 @@ def main():
                         "context": context
                         },
                     })
+                    print(output)
 
                     #TODO: Save users' output performance
                     captureUserInput(userInput, output['answer'], output['score'])
