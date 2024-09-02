@@ -22,7 +22,7 @@ def insertJsonData():
     allData = []
     legalData = orjsonl.load(f"{os.getcwd()}/dags/dataset/qa.jsonl")
 
-    for data in legalData:
+    for data in legalData[0:500]:
 
         data = {
             "question": str(data['question']),
@@ -55,7 +55,7 @@ def insertCsvData():
     allData = []
     legalData = pd.read_csv(f"{os.getcwd()}/dags/dataset/legal_text_classification.csv")
 
-    for index, row in legalData.iterrows():
+    for index, row in legalData.head(500).iterrows():
         
         data = {
             "question": str(row['case_title']),

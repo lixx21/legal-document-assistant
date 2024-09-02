@@ -27,13 +27,7 @@ def main():
                         context += ragOutput['_source']['text'] 
                     
                     #TODO: Use LLM Model
-                    output = query({
-                        "inputs": {
-                        "question": userInput,
-                        "context": context
-                        },
-                    })
-                    print(output)
+                    output = query({"inputs": {"question": userInput,"context": context}})
 
                     #TODO: Save users' output performance
                     captureUserInput(userInput, output['answer'], output['score'])
