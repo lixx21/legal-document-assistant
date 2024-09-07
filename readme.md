@@ -15,6 +15,11 @@ The Legal Document Assistant aims to solve these challenges by implementing a Re
 
 ![RAG FLOW](./images/llm%20rag%20flow.png)
 
+### Dataset
+
+- https://www.kaggle.com/datasets/umarbutler/open-australian-legal-qa/data?select=qa.jsonl
+- https://www.kaggle.com/datasets/amohankumar/legal-text-classification-dataset
+
 ### Tech Stack
 
 The Legal Document Assistant leverages a combination of cutting-edge technologies and tools to provide an efficient and scalable solution for legal document management and retrieval. Below is an overview of the key components of the tech stack:
@@ -37,15 +42,29 @@ In the retrieval phase, the Legal Document Assistant utilizes both **PostgreSQL*
 
 By indexing the dataset from PostgreSQL into Elasticsearch, the retrieval process becomes faster and more efficient, allowing the Legal Document Assistant to quickly access and return the most relevant documents in response to user queries.
 
-### Dataset
+### Retrieval-Augmented Generation (RAG)
+The Legal Document Assistant employs a Retrieval-Augmented Generation (RAG) approach to provide contextually accurate responses based on user queries. This step combines the retrieval power of Elasticsearch with the language generation capabilities of the [google-bert/bert-large-uncased-whole-word-masking-finetuned-squad](https://huggingface.co/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad?context=In+Nasr+v+NRMA+Insurance+%5B2006%5D+NSWSC+1018%2C+the+plaintiff%27s+appeal+was+lodged+out+of+time+because+the+summons+was+filed+on+8+June+2006%2C+seven+months+after+the+decision+of+the+Local+Court+was+made+on+4+October+2005.+No+explanation+was+provided+for+this+delay.&text=In+the+case+of+Nasr+v+NRMA+Insurance+%5B2006%5D+NSWSC+1018%2C+why+was+the+plaintiff%27s+appeal+lodged+out+of+time%3F) from Hugging Face.
 
-- https://www.kaggle.com/datasets/umarbutler/open-australian-legal-qa/data?select=qa.jsonl
-- https://www.kaggle.com/datasets/amohankumar/legal-text-classification-dataset
-- https://www.kaggle.com/datasets/kageneko/legal-case-document-summarization
+1. Integration with Google BERT API: To enhance the relevance and quality of the search results, the application leverages the Google BERT (Bidirectional Encoder Representations from Transformers) model via the Hugging Face API. This model enables the system to generate summaries, suggestions, and context-aware insights based on the retrieved legal documents. The BERT model interprets the user’s query and provides responses that are contextually aligned with legal texts.
+2. Hugging Face API Key: In order to use the Google BERT model from Hugging Face, the application requires an API key (HUGGINGFACE_KEY) from the Hugging Face platform. This key provides access to the BERT API and must be securely stored in the environment configuration.
+3. Docker Compose Setup: The HUGGINGFACE_KEY is integrated into the system using Docker Compose. The API key is placed within the Docker Compose environment file, ensuring secure access during runtime. Here’s how the key is added:
+```
+  app:
+    build: llm-app/.
+    container_name: llm_app
+    environment:
+      - HUGGINGFACE_KEY=<YOUR_API_KEY>
+    volumes:
+      - ./llm-app/:/app
+    networks:
+      - network
+    depends_on:
+      - elasticsearch
+    ports:
+      - "8501:8501"
+```
 
-### RAG 
-
-- [google-bert/bert-large-uncased-whole-word-masking-finetuned-squad](https://huggingface.co/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad?context=In+Nasr+v+NRMA+Insurance+%5B2006%5D+NSWSC+1018%2C+the+plaintiff%27s+appeal+was+lodged+out+of+time+because+the+summons+was+filed+on+8+June+2006%2C+seven+months+after+the+decision+of+the+Local+Court+was+made+on+4+October+2005.+No+explanation+was+provided+for+this+delay.&text=In+the+case+of+Nasr+v+NRMA+Insurance+%5B2006%5D+NSWSC+1018%2C+why+was+the+plaintiff%27s+appeal+lodged+out+of+time%3F)
+This allows the Legal Document Assistant to seamlessly interact with the Hugging Face API for enhanced document retrieval and generation, ensuring that the output is contextually relevant and precise.
 
 ### Interface
 
