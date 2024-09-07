@@ -13,6 +13,8 @@ The Legal Document Assistant aims to solve these challenges by implementing a Re
 
 ## RAG Flow
 
+![RAG FLOW](./images/llm%20rag%20flow.png)
+
 ### Tech Stack
 
 The Legal Document Assistant leverages a combination of cutting-edge technologies and tools to provide an efficient and scalable solution for legal document management and retrieval. Below is an overview of the key components of the tech stack:
