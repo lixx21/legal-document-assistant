@@ -39,17 +39,20 @@ def main():
                         context += ragOutput['_source']['answer'] 
                     
                     #TODO: Use LLM Model
-                    output, responseTime = query({"inputs": {"question": userInput,"context": context}})
+                    output, responseTime = query({"inputs": {"question": userInput.replace("'",""),"context": context}})
+    
+                    result = output['answer'].replace("'","")
 
-                    result = output['answer']
+                    # prompt = generatePrompt(userInput, context)
+                    # result, response_time, response = llmOllama(prompt)
                     docId = generate_document_id(userInput, result)
                   
                     #TODO: Save users' output performance
-                    # captureUserInput(docId, userInput, result, output['score'], responseTime)
+                    print(captureUserInput(docId, userInput.replace("'",""), result, output['score'], responseTime))
 
                     st.session_state.result = result
                     st.session_state.docId = docId
-                    st.session_state.userInput = userInput
+                    st.session_state.userInput = userInput.replace("'","")
                     # Reset feedback submission flag
                     st.session_state.feedbackSubmitted = False
 
@@ -69,7 +72,7 @@ def main():
             feedback_col1, feedback_col2 = st.columns(2)
             with feedback_col1:
                 if st.button('Satisfied'):
-                    captureUserFeedback(st.session_state.docId, st.session_state.userInput, st.session_state.result, True)
+                    print(captureUserFeedback(st.session_state.docId, st.session_state.userInput, st.session_state.result, True))
                     st.session_state.feedbackSubmitted = True
             with feedback_col2:
                 if st.button('Unsatisfied'):

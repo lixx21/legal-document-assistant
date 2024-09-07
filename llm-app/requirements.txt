@@ -6,3 +6,4 @@ stqdm
 transformers
 ollama
 psycopg2
+openai

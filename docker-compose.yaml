@@ -58,8 +58,9 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     restart: always
+    container_name: pgAdmin
     environment:
-      - PGADMIN_DEFAULT_EMAIL=lixx@example.com
+      - PGADMIN_DEFAULT_EMAIL=llm@example.com
       - PGADMIN_DEFAULT_PASSWORD=123456
       - PGADMIN_LISTEN_PORT=5050
     ports:
@@ -211,5 +212,4 @@ volumes:
   postgres-db-volume:
   grafana-storage:
   grafana-plugins:
-  ollama_data:
   elastic-search-data:

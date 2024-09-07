@@ -42,10 +42,7 @@ def createTable():
         );
         """
         cur.execute(create)
-        conn.commit()
 
-        cur.close()
-        conn.close()
     except Exception as e:
         print(e)
 
@@ -55,13 +52,12 @@ def createTable():
                 TRUNCATE TABLE legal_document;
             """
             cur.execute(create)
-            conn.commit()
 
-            cur.close()
-            conn.close()
         except Exception as e:
             print(e)
-
+    conn.commit()
+    cur.close()
+    conn.close()
 
 def insertJsonData():
     
