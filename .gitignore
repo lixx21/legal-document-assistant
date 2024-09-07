@@ -3,4 +3,3 @@ orchestration/plugins
 orchestration/dags/src/extract_data.ipynb
 orchestration/dags/dataset/test.ipynb
 test_llm.ipynb
-*.json
