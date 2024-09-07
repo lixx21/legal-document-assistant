@@ -10,19 +10,44 @@ Law firms and legal professionals face significant challenges in managing large 
 
 The Legal Document Assistant aims to solve these challenges by implementing a Retrieval-Augmented Generation (RAG) approach, combined with a powerful large language model (LLM). This system allows law firms to efficiently query vast collections of legal documents and receive contextually accurate answer. By integrating LLM with a knowledge base, the application provides lawyers with instant access to relevant case laws, legal precedents, statutes, and other legal documents. The assistant can streamline legal research, reduce the time spent on manual searches, and ensure that critical information is not overlooked, ultimately improving the legal research process and enhancing decision-making capabilities.
 
-## Dataset
+
+## RAG Flow
+
+### Tech Stack
+
+The Legal Document Assistant leverages a combination of cutting-edge technologies and tools to provide an efficient and scalable solution for legal document management and retrieval. Below is an overview of the key components of the tech stack:
+
+- Python: The core language used for developing the application, enabling seamless integration of machine learning models, data processing, and backend services.
+- Streamlit: A lightweight web framework used to create an intuitive and interactive user interface (UI) for the Legal Document Assistant. Streamlit allows lawyers and legal professionals to interact with the system effortlessly, providing a seamless experience for querying documents and retrieving legal information.
+- Airflow: A powerful orchestration tool used to manage and schedule workflows, ensuring that data ingestion, processing, and retrieval tasks are automated and run efficiently.
+- Elasticsearch: A distributed search engine used to index and query large collections of legal documents. Elasticsearch allows for fast and efficient full-text search, ensuring that relevant case laws, statutes, and legal documents can be retrieved quickly.
+- Google BERT LLM Model: The Google BERT (Bidirectional Encoder Representations from Transformers) model is employed to enhance the retrieval-augmented generation (RAG) flow. This large language model provides contextually accurate suggestions, summaries, and insights based on user queries, making the search results more meaningful and relevant.
+- Grafana: A real-time monitoring and visualization tool used to track the performance of the application. It allows developers and administrators to gain insights into system health, query performance, and other important metrics to ensure smooth operations.
+- Docker: Used to containerize the entire application, ensuring consistency across different environments and simplifying deployment. Docker ensures that all services (e.g., Airflow, Elasticsearch, BERT model, Grafana) are isolated, scalable, and easy to manage.
+
+### Retrieval
+
+In the retrieval phase, the Legal Document Assistant utilizes both **PostgreSQL** and **Elasticsearch** to efficiently process and answer user queries by combining structured data storage and high-performance search capabilities.
+
+**Dataset Storage and Indexing**: Legal documents, case laws, and statutes are stored in a PostgreSQL database. This relational database organizes the dataset, maintaining the structure and integrity of the legal information. PostgreSQL stores detailed metadata, including document types, case names, statutes, and related legal details. To enhance search performance, an index of this dataset is created in Elasticsearch, allowing for faster retrieval of relevant information.
+
+**Search via Elasticsearch**: Once the PostgreSQL dataset is indexed into Elasticsearch, it enables full-text search across the stored documents. When a user submits a query, Elasticsearch performs a fast, scalable search, looking through the indexed documents for matches based on the user's question. Elasticsearch uses advanced ranking algorithms to ensure the most relevant legal documents are returned. The results are filtered and ranked by relevance, offering accurate and contextually appropriate legal information.
+
+By indexing the dataset from PostgreSQL into Elasticsearch, the retrieval process becomes faster and more efficient, allowing the Legal Document Assistant to quickly access and return the most relevant documents in response to user queries.
+
+### Dataset
 
 - https://www.kaggle.com/datasets/umarbutler/open-australian-legal-qa/data?select=qa.jsonl
 - https://www.kaggle.com/datasets/amohankumar/legal-text-classification-dataset
 - https://www.kaggle.com/datasets/kageneko/legal-case-document-summarization
 
-## Project Flow
-
-### Retrieval
-
 ### RAG 
 
 - [google-bert/bert-large-uncased-whole-word-masking-finetuned-squad](https://huggingface.co/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad?context=In+Nasr+v+NRMA+Insurance+%5B2006%5D+NSWSC+1018%2C+the+plaintiff%27s+appeal+was+lodged+out+of+time+because+the+summons+was+filed+on+8+June+2006%2C+seven+months+after+the+decision+of+the+Local+Court+was+made+on+4+October+2005.+No+explanation+was+provided+for+this+delay.&text=In+the+case+of+Nasr+v+NRMA+Insurance+%5B2006%5D+NSWSC+1018%2C+why+was+the+plaintiff%27s+appeal+lodged+out+of+time%3F)
+
+### Interface
+
+### Ingestion Pipeline
 
 ### Evaluation
 
