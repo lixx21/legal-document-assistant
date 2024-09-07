@@ -101,10 +101,12 @@ To evaluate the effectiveness of the Retrieval-Augmented Generation (RAG) approa
 Definition: Hit Rate measures the proportion of queries for which the correct answer is found within a predefined number of top results.
 
 Application: We assess whether the relevant legal documents appear in the top results of the retrieval process.
+
 2. Mean Reciprocal Rank (MRR)
 Definition: MRR calculates the average rank at which the first relevant result appears across all queries.
 
 Application: We compute MRR to gauge the position of the first relevant document in the search results, indicating the effectiveness of our retrieval system.
+
 3. Google BERT Scores
 Definition: BERT scores are obtained from the Google BERT model to evaluate the relevance and quality of generated summaries and suggestions.
 
