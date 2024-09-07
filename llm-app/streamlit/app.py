@@ -1,12 +1,23 @@
 import streamlit as st
 from src.elasticSearch import getEsClient, elasticSearch
-from src.llm import query, captureUserInput
+from src.llm import query, captureUserInput, generate_document_id, captureUserFeedback
 
 def main():
     st.set_page_config(
         page_title= "Legal Assistant"
     )
     st.title("Legal Document Assistant")
+    
+    #TODO: Initialize session state
+    if 'result' not in st.session_state:
+        st.session_state.result = None
+    if 'docId' not in st.session_state:
+        st.session_state.docId = None
+    if 'userInput' not in st.session_state:
+        st.session_state.userInput = ""
+    if 'feedbackSubmitted' not in st.session_state:
+        st.session_state.feedbackSubmitted = False
+
     userInput = st.text_input("Enter your question:")
 
     indexName = "legal-documents"
@@ -29,19 +40,40 @@ def main():
                     #TODO: Use LLM Model
                     output = query({"inputs": {"question": userInput,"context": context}})
 
+                    result = output['answer']
+                    docId = generate_document_id(userInput, result)
                     #TODO: Save users' output performance
-                    captureUserInput(userInput, output['answer'], output['score'])
+                    captureUserInput(docId, userInput, result, output['score'])
 
-                    st.write(output['answer'])
+                    st.session_state.result = result
+                    st.session_state.docId = docId
+                    st.session_state.userInput = userInput
+                    # Reset feedback submission flag
+                    st.session_state.feedbackSubmitted = False
 
                 except Exception as e:
                     print(e)
                     st.write("it seems Elastic Search still running, please refresh again")
-
-                
-
         else:
             st.write("please enter a question before click ask")
+
+   # Display result if available
+    if st.session_state.result:
+        st.write(st.session_state.result)
+        
+        # Feedback buttons
+        # Show feedback buttons only if feedback hasn't been submitted
+        if not st.session_state.feedbackSubmitted:
+            feedback_col1, feedback_col2 = st.columns(2)
+            with feedback_col1:
+                if st.button('Satisfied'):
+                    captureUserFeedback(st.session_state.docId, st.session_state.userInput, st.session_state.result, True)
+                    st.session_state.feedbackSubmitted = True
+            with feedback_col2:
+                if st.button('Unsatisfied'):
+                    captureUserFeedback(st.session_state.docId, st.session_state.userInput, st.session_state.result, False)
+                    st.session_state.feedbackSubmitted = True
+
 
 if __name__ == "__main__":
     main()

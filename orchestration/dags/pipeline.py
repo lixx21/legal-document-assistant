@@ -14,7 +14,7 @@ defaultArguments = {
 dag = DAG(
     "Get_All_LLM_Data",
     default_args = defaultArguments,
-    schedule_interval = "0 */3 * * *",
+    schedule_interval = "0 0 * * *",
     description = "Insert all llm data into MongoDB"
 )
 
