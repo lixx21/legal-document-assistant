@@ -36,9 +36,9 @@ The Legal Document Assistant leverages a combination of cutting-edge technologie
 
 In the retrieval phase, the Legal Document Assistant utilizes both **PostgreSQL** and **Elasticsearch** to efficiently process and answer user queries by combining structured data storage and high-performance search capabilities.
 
-**1. Dataset Storage and Indexing**: Legal documents, case laws, and statutes are stored in a PostgreSQL database. This relational database organizes the dataset, maintaining the structure and integrity of the legal information. PostgreSQL stores detailed metadata, including document types, case names, statutes, and related legal details. To enhance search performance, an index of this dataset is created in Elasticsearch, allowing for faster retrieval of relevant information.
+1. Dataset Storage and Indexing: Legal documents, case laws, and statutes are stored in a PostgreSQL database. This relational database organizes the dataset, maintaining the structure and integrity of the legal information. PostgreSQL stores detailed metadata, including document types, case names, statutes, and related legal details. To enhance search performance, an index of this dataset is created in Elasticsearch, allowing for faster retrieval of relevant information.
 
-**2. Search via Elasticsearch**: Once the PostgreSQL dataset is indexed into Elasticsearch, it enables full-text search across the stored documents. When a user submits a query, Elasticsearch performs a fast, scalable search, looking through the indexed documents for matches based on the user's question. Elasticsearch uses advanced ranking algorithms to ensure the most relevant legal documents are returned. The results are filtered and ranked by relevance, offering accurate and contextually appropriate legal information.
+2. Search via Elasticsearch: Once the PostgreSQL dataset is indexed into Elasticsearch, it enables full-text search across the stored documents. When a user submits a query, Elasticsearch performs a fast, scalable search, looking through the indexed documents for matches based on the user's question. Elasticsearch uses advanced ranking algorithms to ensure the most relevant legal documents are returned. The results are filtered and ranked by relevance, offering accurate and contextually appropriate legal information.
 
 By indexing the dataset from PostgreSQL into Elasticsearch, the retrieval process becomes faster and more efficient, allowing the Legal Document Assistant to quickly access and return the most relevant documents in response to user queries.
 
@@ -79,6 +79,19 @@ The Legal Document Assistant provides an intuitive and user-friendly interface b
 The Streamlit interface ensures a smooth and seamless user experience, allowing legal professionals to efficiently query the system and interact with the results.
 
 ### Ingestion Pipeline
+
+![airflow](./images/airflow.png)
+
+The data ingestion process involves loading legal documents from CSV and JSON files into PostgreSQL and indexing them into Elasticsearch. This is managed using **Apache Airflow**.
+
+1. Data Extraction
+CSV & JSON: Airflow extracts data from CSV and JSON files, converting it into a suitable format for PostgreSQL.
+2. Data Loading
+PostgreSQL: The extracted data is cleaned, transformed, and loaded into PostgreSQL tables using Airflow.
+3. Data Indexing
+Elasticsearch: Data is exported from PostgreSQL, indexed into Elasticsearch with appropriate mappings for efficient search.
+4. Monitoring
+Airflow monitors the pipeline for performance and errors, ensuring data integrity and prompt issue resolution.
 
 ### Evaluation
 
