@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 from datetime import timedelta
-from src.insertData import insertJsonData, insertCsvData, createIndex
+from src.insertData import insertJsonData, insertCsvData, createIndex, createTable
 
 defaultArguments = {
     "owner": "Felix Pratamasan",
@@ -18,6 +18,11 @@ dag = DAG(
     description = "Insert all llm data into MongoDB"
 )
 
+createTable = PythonOperator(
+    task_id= "create_table",
+    python_callable= createTable,
+    dag = dag
+)
 insertJson = PythonOperator(
     task_id= "get_json_data",
     python_callable=insertJsonData,
@@ -36,4 +41,4 @@ ingestData = PythonOperator(
     dag=dag
 )
 
-insertJson >> insertCsv >> ingestData
+createTable>> insertJson >> insertCsv >> ingestData

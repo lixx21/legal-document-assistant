@@ -36,7 +36,7 @@ def main():
                     ragOutputs = elasticSearch(esClient, userInput, indexName)
                     context = ""
                     for ragOutput in ragOutputs:
-                        context += ragOutput['_source']['text'] 
+                        context += ragOutput['_source']['answer'] 
                     
                     #TODO: Use LLM Model
                     output, responseTime = query({"inputs": {"question": userInput,"context": context}})
@@ -45,7 +45,7 @@ def main():
                     docId = generate_document_id(userInput, result)
                   
                     #TODO: Save users' output performance
-                    captureUserInput(docId, userInput, result, output['score'], responseTime)
+                    # captureUserInput(docId, userInput, result, output['score'], responseTime)
 
                     st.session_state.result = result
                     st.session_state.docId = docId

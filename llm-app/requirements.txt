@@ -4,3 +4,5 @@ elasticsearch
 mistralai
 stqdm
 transformers
+ollama
+psycopg2

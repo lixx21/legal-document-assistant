@@ -34,6 +34,7 @@ x-airflow-common:
       condition: service_healthy
 
 services:
+  #airflow postgres
   postgres:
     image: postgres:13
     container_name: airflow_postgres
@@ -48,9 +49,27 @@ services:
       interval: 10s
       retries: 5
       start_period: 5s
+    ports:
+      - "5432:5432"
     networks:
       - network
   #  restart: on-failure 
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=lixx@example.com
+      - PGADMIN_DEFAULT_PASSWORD=123456
+      - PGADMIN_LISTEN_PORT=5050
+    ports:
+      - "5050:5050"
+    volumes:
+      - pgvolume:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - network
 
   redis:
     image: redis:7.2-bookworm
@@ -150,36 +169,8 @@ services:
       - "9300:9300"
     networks:
       - network
-
-  mongodb:
-    image: mongo:6.0
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin
     volumes:
-      - mongo-data:/data/db
-    networks:
-      - network
-  
-  mongo-express:
-    image: mongo-express:latest
-    container_name: mongo-express
-    ports:
-      - "8081:8081"
-    environment:
-      - ME_CONFIG_MONGODB_SERVER=mongodb
-      - ME_CONFIG_MONGODB_PORT=27017
-      - ME_CONFIG_BASICAUTH_USERNAME=admin
-      - ME_CONFIG_BASICAUTH_PASSWORD=admin
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=admin
-    depends_on:
-      - mongodb
-    networks:
-      - network
+      - elastic-search-data:/usr/share/elasticsearch/data
   
   app:
     build: llm-app/.
@@ -195,10 +186,30 @@ services:
     ports:
       - "8501:8501"
 
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - '3000:3000'
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - grafana-plugins:/var/lib/grafana/plugins
+    networks:
+      - network 
+    depends_on:
+      - postgres
+
 networks:
   network:
     driver: bridge
 
 volumes:
-  mongo-data:
+  # mongo-data:
+  pgvolume:
   postgres-db-volume:
+  grafana-storage:
+  grafana-plugins:
+  ollama_data:
+  elastic-search-data:
