@@ -1,4 +1,4 @@
-from src.connection import mongodb_connection, postgre_connection
+from src.connection import postgre_connection
 
 def getData():
     # db, collection  = mongodb_connection("llm_data", "legal_document")
@@ -12,5 +12,8 @@ def getData():
 
     for result in results:
         allDocuments.append(result)
+
+    cur.close()
+    conn.close()
 
     return allDocuments
