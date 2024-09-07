@@ -1,6 +1,7 @@
 import streamlit as st
 from src.elasticSearch import getEsClient, elasticSearch
 from src.llm import query, captureUserInput, generate_document_id, captureUserFeedback
+import time
 
 def main():
     st.set_page_config(
@@ -38,12 +39,13 @@ def main():
                         context += ragOutput['_source']['text'] 
                     
                     #TODO: Use LLM Model
-                    output = query({"inputs": {"question": userInput,"context": context}})
+                    output, responseTime = query({"inputs": {"question": userInput,"context": context}})
 
                     result = output['answer']
                     docId = generate_document_id(userInput, result)
+                  
                     #TODO: Save users' output performance
-                    captureUserInput(docId, userInput, result, output['score'])
+                    captureUserInput(docId, userInput, result, output['score'], responseTime)
 
                     st.session_state.result = result
                     st.session_state.docId = docId
