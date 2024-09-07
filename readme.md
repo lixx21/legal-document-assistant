@@ -68,6 +68,16 @@ This allows the Legal Document Assistant to seamlessly interact with the Hugging
 
 ### Interface
 
+![streamlit interface](./images/llm.png)
+
+The Legal Document Assistant provides an intuitive and user-friendly interface built using Streamlit. The interface is designed to allow legal professionals to easily interact with the system, submit queries, and provide feedback on the results. Key features of the interface include:
+
+1. Text Input Field: Users can enter their legal questions or queries into the text field. This input is sent to the system, which processes the query through the Retrieval-Augmented Generation (RAG) pipeline to return relevant legal documents and summaries.
+2. Ask Button: After entering a query, users click the Ask button to submit their question. The system then retrieves and generates responses based on the user input, leveraging Elasticsearch for document search and the Google BERT model for contextual generation.
+3. Satisfaction Button: Once the results are displayed, users can provide feedback on the accuracy and relevance of the retrieved documents and generated summaries by clicking the Satisfaction button. This feedback helps monitor the quality of the responses and can be used for system improvement and performance tracking.
+
+The Streamlit interface ensures a smooth and seamless user experience, allowing legal professionals to efficiently query the system and interact with the results.
+
 ### Ingestion Pipeline
 
 ### Evaluation
