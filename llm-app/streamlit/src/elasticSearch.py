@@ -27,7 +27,7 @@ def elasticSearch(esClient, query, indexName):
     resultDocs = []
 
     for hit in response['hits']['hits']:
-        resultDocs.append(hit)
+        resultDocs.append(hit['_source'])
 
     return resultDocs
 

@@ -1,6 +1,7 @@
 import streamlit as st
 from src.elasticSearch import getEsClient, elasticSearch
 from src.llm import query, captureUserInput, generate_document_id, captureUserFeedback
+from src.evaluation import evaluate
 import time
 
 def main():
@@ -36,11 +37,13 @@ def main():
                     ragOutputs = elasticSearch(esClient, userInput, indexName)
                     context = ""
                     for ragOutput in ragOutputs:
-                        context += ragOutput['_source']['answer'] 
+                        context += ragOutput['answer'] 
                     
+                    evaluateResult = evaluate(lambda q: elasticSearch(esClient, userInput, indexName))
+
                     #TODO: Use LLM Model
                     output, responseTime = query({"inputs": {"question": userInput.replace("'",""),"context": context}})
-    
+                   
                     result = output['answer'].replace("'","")
 
                     # prompt = generatePrompt(userInput, context)
@@ -48,7 +51,8 @@ def main():
                     docId = generate_document_id(userInput, result)
                   
                     #TODO: Save users' output performance
-                    print(captureUserInput(docId, userInput.replace("'",""), result, output['score'], responseTime))
+                    captureUserInput(docId, userInput.replace("'",""), result, output['score'], responseTime, 
+                        evaluateResult['hit_rate'], evaluateResult['mrr'])
 
                     st.session_state.result = result
                     st.session_state.docId = docId
@@ -72,7 +76,7 @@ def main():
             feedback_col1, feedback_col2 = st.columns(2)
             with feedback_col1:
                 if st.button('Satisfied'):
-                    print(captureUserFeedback(st.session_state.docId, st.session_state.userInput, st.session_state.result, True))
+                    captureUserFeedback(st.session_state.docId, st.session_state.userInput, st.session_state.result, True)
                     st.session_state.feedbackSubmitted = True
             with feedback_col2:
                 if st.button('Unsatisfied'):

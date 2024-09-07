@@ -56,7 +56,7 @@ def query(payload):
 
 #     return answer, response_time, response
 
-def captureUserInput(docId,userQuery, result, llmScore, responseTime):
+def captureUserInput(docId,userQuery, result, llmScore, responseTime, hit_rate, mrr):
     conn, cur = postgre_connection()
     try:
         create = """
@@ -68,6 +68,8 @@ def captureUserInput(docId,userQuery, result, llmScore, responseTime):
             result TEXT NOT NULL,
             llm_score DOUBLE PRECISION NOT NULL,
             response_time DOUBLE PRECISION NOT NULL,
+            hit_rate_score DOUBLE PRECISION NOT NULL,
+            mrr_score DOUBLE PRECISION NOT NULL,
             created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         """
@@ -80,9 +82,9 @@ def captureUserInput(docId,userQuery, result, llmScore, responseTime):
     try:
         sql = f"""
             INSERT INTO evaluation_data
-            (doc_id, user_input, result, llm_score, response_time)
+            (doc_id, user_input, result, llm_score, response_time, hit_rate_score, mrr_score)
             VALUES
-            ('{docId}', '{userQuery}', '{result}', {llmScore}, {responseTime})
+            ('{docId}', '{userQuery}', '{result}', {llmScore}, {responseTime}, {hit_rate}, {mrr})
         """
         cur.execute(sql)
         

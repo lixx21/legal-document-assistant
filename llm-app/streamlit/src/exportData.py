@@ -26,5 +26,5 @@ finalData = []
 for data in allDocuments:
     finalData.append(data)
 
-with open("allDocument.json", "a") as file:
+with open("ground_truth/allDocument.json", "a") as file:
     json.dump(finalData, file)
