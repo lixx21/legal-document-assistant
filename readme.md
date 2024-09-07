@@ -93,7 +93,7 @@ Elasticsearch: Data is exported from PostgreSQL, indexed into Elasticsearch with
 4. Monitoring
 Airflow monitors the pipeline for performance and errors, ensuring data integrity and prompt issue resolution.
 
-### Evaluation
+### RAG Evaluation
 
 To evaluate the effectiveness of the Retrieval-Augmented Generation (RAG) approach, we utilize two key metrics: Hit Rate and Mean Reciprocal Rank (MRR). Additionally, the evaluation incorporates scores obtained from Google BERT.
 
