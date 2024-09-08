@@ -101,7 +101,26 @@ To evaluate the effectiveness of the Retrieval-Augmented Generation (RAG) approa
 2. Mean Reciprocal Rank (MRR): calculates the average rank at which the first relevant result appears across all queries.
 3. Google BERT Scores: are obtained from the Google BERT model to evaluate the relevance and quality of generated summaries and suggestions.
 
-### Dashboard
+### Monitoring Dashboard
+
+![grafan](./images/dashboard.png)
+
+To track the performance and usage of the Legal Document Assistant, we utilize a Grafana dashboard that monitors key metrics in real time. The following metrics are visualized to ensure system efficiency and user satisfaction:
+
+1. Total Questions Answered
+  - Metric: The total number of user queries processed by the system.
+  - Purpose: Tracks overall usage and demand for the system.
+2. Total Users Filled Feedback
+  - Metric: The total number of users who provided feedback after receiving an answer.
+  - Purpose: Measures engagement and feedback collection for evaluating user experience.
+3. Satisfaction Rate
+  - Metric: The ratio of satisfied users (users who clicked “satisfied”) to the total number of users who filled feedback.
+  - Purpose: Indicates user satisfaction and helps identify areas for improvement.
+4. Response Time per Created Time (Time Series)
+  - Metric: Tracks the response time of the system for each query over time.
+  - Purpose: Monitors system performance and response efficiency.
+5. LLM Score, Hit Rate, and MRR Score per Time (Time Series)
+  - Metric: Visualizes the LLM-generated score, Hit Rate, and MRR over time for each query.
+  - Purpose: Evaluates the accuracy and effectiveness of the retrieval system and LLM performance over time.
 
 ## How to run
-
