@@ -124,3 +124,42 @@ To track the performance and usage of the Legal Document Assistant, we utilize a
   - Purpose: Evaluates the accuracy and effectiveness of the retrieval system and LLM performance over time.
 
 ## How to run
+
+1. Get hugging face access token: Obtain a Hugging Face User Access Token by following the instructions on this page: [Hugging Face Security Tokens](https://huggingface.co/docs/hub/en/security-tokens).
+2. Fill in Hugging Face Key: Add your Hugging Face Access Token to the `docker-compose.yml` file under the environment variables section for the service requiring the key.
+```
+  app:
+    build: llm-app/.
+    container_name: llm_app
+    environment:
+      - HUGGINGFACE_KEY=<YOUR_API_KEY>
+    volumes:
+      - ./llm-app/:/app
+    networks:
+      - network
+    depends_on:
+      - elasticsearch
+    ports:
+      - "8501:8501"
+```
+3. Start Docker Containers: run this command `docker-compose up --build -d`
+4. Wait for Containers to Start: It may take some time for all the containers to fully initialize, especially Airflow. You can check the status by monitoring the logs or using Docker commands.
+5. Access Airflow: 
+  - Once the Airflow webserver is running, you can access it at `localhost:8080`,
+  - Log in using the default credentials (username: `airflow`, password: `airflow`), which are set in the `docker-compose.yml` file
+  - Start the DAG from the Airflow UI. The pipeline will extract data from CSV and JSON files and index it into Elasticsearch. The DAG runs automatically once per day.
+6. Access the Streamlit App
+  - Access the Streamlit app at `localhost:8501`
+  - After asking a question, if you receive a message like `It seems Elastic Search is still running, please refresh again`, wait for Elasticsearch to finish starting, then try again after a few seconds.
+7. Monitoring the App with Grafana
+  - Grafana can be accessed at `localhost:3000`
+  - Import the provided dashboard configuration `llm-app/dashboard.json` to monitor key metrics like response time, user satisfaction, and retrieval performance.
+
+### Questions Example
+
+You may used these questions example below to test the app. But, feel free to ask another question:
+1. Why did the plaintiff wait seven months to file an appeal?
+2. What was the outcome of the case?
+3. Can you provide more details on the clarification provided in Note 1?
+4. Can the landlord avoid liability for breaching this obligation if the state of disrepair is caused by the tenant's actions?
+5. What is the Commonwealth Bank of Australia fixed deposit account?
